@@ -68,7 +68,7 @@ function App() {
   const LoggedList = withLogger(List);
   return (
     <Space direction="vertical" size="middle">
-      <Image src="/todo-list.jpg" />
+      <Image src="todo-list.jpg" />
       <h1>Get things done!</h1>
       <Space.Compact size="large" style={{ width: "500px" }}>
         <Input

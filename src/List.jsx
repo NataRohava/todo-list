@@ -22,7 +22,11 @@ export const List = ({
         <div key={index} id={index}>
           {editIdTask === index ? (
             <Space.Compact size="large" style={{ width: "500px" }}>
-              <Input value={editTaskValue} onChange={handleInputChange} />
+              <Input
+                value={editTaskValue}
+                onChange={handleInputChange}
+                autoFocus
+              />
               <Button
                 style={{
                   backgroundColor: "#e9d1af",

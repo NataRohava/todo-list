@@ -1,6 +1,10 @@
 export const withLogger = (WrappedComponent) => {
   return (props) => {
-    const handleUpdateTask = (id) => {
+    // const handleUpdateTask = (id) => {
+    //   console.log("Задача обновлена");
+    //   props.editTask(id);
+    // };
+    const handleUpdateClick = (id) => {
       console.log("Задача обновлена");
       props.editTask(id);
     };
@@ -11,7 +15,7 @@ export const withLogger = (WrappedComponent) => {
     return (
       <WrappedComponent
         {...props}
-        editTask={handleUpdateTask}
+        editTask={handleUpdateClick}
         deleteTask={handleDeleteTask}
       />
     );
