@@ -1,44 +1,57 @@
-import { List } from "./List";
-import { withLogger } from "./withLogger";
-import { Button, Input, Space, Image } from "antd";
 import { useState, useEffect } from "react";
+import { Header } from "./Header";
+import { InputTask } from "./InputTask";
+import { TasksCounter } from "./TasksCounter";
+import { ClearCompletedTasks } from "./ClearCompletedTasks";
+import { api } from "./api";
+import { List } from "./List";
+import { Space } from "antd";
 import "./App.css";
 
 function App() {
   const [task, setTask] = useState("");
-  const [list, setList] = useState(() => {
-    const savedTasks = localStorage.getItem("tasks");
-    return savedTasks ? JSON.parse(savedTasks) : [];
-  });
-
+  const [list, setList] = useState([]);
   const [editIdTask, setEditIdTask] = useState(null);
   const [editTaskValue, setEditTaskValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [crossOutIdTask, setCrossOutIdTask] = useState(() => {
-    const savedCrossOutTasks = localStorage.getItem("crossOutTasks");
-    return savedCrossOutTasks ? JSON.parse(savedCrossOutTasks) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(list));
-  }, [list]);
-
-  useEffect(() => {
-    localStorage.setItem("crossOutTasks", JSON.stringify(crossOutIdTask));
-  }, [crossOutIdTask]);
-
-  const addTask = () => {
-    if (task.trim()) {
-      setList([task, ...list]);
-      setTask("");
+  const getTasks = async () => {
+    try {
+      const response = await api.get("/todos");
+      setList(response.data);
+    } catch (error) {
+      console.error("Ошибка при получении данных:", error);
     }
   };
+  useEffect(() => {
+    getTasks();
+  }, []);
 
-  const handleChange = (event) => {
-    setTask(event.target.value);
+  const addNewTask = async (newTask) => {
+    try {
+      const response = await api.post("/todos", newTask);
+      setList((prevList) => [...prevList, response.data]);
+    } catch (error) {
+      console.error("Ошибка при добавлении данных:", error);
+    }
   };
-  const handleKeyDown = (event) => {
-    event.key === "Enter" && addTask();
+  const newTaskData = {
+    title: task,
+  };
+  const addTask = () => {
+    addNewTask(newTaskData);
+    setTask("");
+  };
+
+  const completeTask = async (taskId, completedTask) => {
+    try {
+      const response = await api.patch(
+        `/todos/${taskId}/isCompleted`,
+        completedTask
+      );
+    } catch (error) {
+      console.error("Ошибка при выполнении данных:", error);
+    }
   };
   const editTask = (id) => {
     setEditIdTask(id);
@@ -47,49 +60,39 @@ function App() {
   const handleInputChange = (event) => {
     setEditTaskValue(event.target.value);
   };
-
   const handleUpdateClick = (id) => {
     if (editTaskValue.trim()) {
-      const updatedList = list.map((item, index) =>
-        index === id ? editTaskValue : item
+      const updatedList = list.map((item) =>
+        item.id === id ? { ...item, title: editTaskValue } : item
       );
       setList(updatedList);
       setEditIdTask(null);
     }
   };
-  const deleteTask = (id) => {
-    setList(list.filter((item, index) => index !== id));
+
+  const deleteTask = async (id) => {
+    try {
+      const response = await api.delete(`/todos/${id}`);
+      setList((prevList) => prevList.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Ошибка при удалении задачи:", error);
+    }
   };
+
   const handleCrossOutTask = (id) => {
-    setCrossOutIdTask((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    const completedTaskData = setList((prevList) =>
+      list.map((item) =>
+        item.id === id ? { ...item, isCompleted: !item.isCompleted } : item
+      )
     );
+    completeTask(id, completedTaskData);
   };
-  const LoggedList = withLogger(List);
+
   return (
     <Space direction="vertical" size="middle">
-      <Image src="todo-list.jpg" />
-      <h1>Get things done!</h1>
-      <Space.Compact size="large" style={{ width: "500px" }}>
-        <Input
-          placeholder="What is the task today?"
-          value={task}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
-        <Button
-          style={{
-            backgroundColor: "#e9d1af",
-            borderColor: "#ccb188",
-            fontSize: "18px",
-            fontWeight: "500",
-          }}
-          onClick={addTask}
-        >
-          Add task
-        </Button>
-      </Space.Compact>
-      <LoggedList
+      <Header />
+      <InputTask task={task} setTask={setTask} addTask={addTask} />
+      <List
         list={list}
         deleteTask={deleteTask}
         editTask={editTask}
@@ -97,14 +100,16 @@ function App() {
         editTaskValue={editTaskValue}
         handleInputChange={handleInputChange}
         handleUpdateClick={handleUpdateClick}
-        crossOutIdTask={crossOutIdTask}
         handleCrossOutTask={handleCrossOutTask}
       />
-      <p style={{ marginTop: "100px" }}>
-        <a>Log out</a>
-      </p>
+      <TasksCounter list={list} />
+      <ClearCompletedTasks
+        list={list}
+        setList={setList}
+        loading={loading}
+        setLoading={setLoading}
+      />
     </Space>
   );
 }
-
 export default App;
