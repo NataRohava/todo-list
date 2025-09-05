@@ -1,9 +1,7 @@
 const initialValue = {
-  value: [
+  tasks: [
     { id: crypto.randomUUID(), title: "Купить молоко", isCompleted: false },
   ],
-  editId: null,
-  editValue: "",
 };
 
 const listReducer = (store = initialValue, action) => {
@@ -11,8 +9,8 @@ const listReducer = (store = initialValue, action) => {
     case "add":
       return {
         ...store,
-        value: [
-          ...store.value,
+        tasks: [
+          ...store.tasks,
           {
             id: crypto.randomUUID(),
             title: action.payload,
@@ -23,31 +21,25 @@ const listReducer = (store = initialValue, action) => {
     case "delete":
       return {
         ...store,
-        value: store.value.filter((task) => task.id !== action.payload),
+        tasks: store.tasks.filter((task) => task.id !== action.payload),
       };
     case "crossOut":
       return {
         ...store,
-        value: store.value.map((task) =>
+        tasks: store.tasks.map((task) =>
           task.id === action.payload
             ? { ...task, isCompleted: !task.isCompleted }
-            : task
+            : task,
         ),
       };
-    case "edit":
-      return { ...store, editId: action.payload };
-    case "editTaskValue":
-      return { ...store, editValue: action.payload };
     case "updateTask":
       return {
         ...store,
-        value: store.value.map((item, index) =>
+        tasks: store.tasks.map((item) =>
           item.id === action.payload.id
             ? { ...item, title: action.payload.value }
-            : item
+            : item,
         ),
-        editId: null,
-        editValue: "",
       };
     default:
       return store;

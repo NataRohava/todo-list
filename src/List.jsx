@@ -1,43 +1,54 @@
-import { Input, Button, Space } from "antd";
-import { CrossOutTask } from "./CrossOutTask";
-import { useSelector } from "react-redux";
+import { Space } from "antd";
+import { useDispatch } from "react-redux";
+import { crossOutTask } from "./redux/actions/crossOutTaskActions";
+import { deleteTask } from "./redux/actions/deleteTaskActions";
+import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
 
-export const List = ({ handleInputChange, handleUpdateClick }) => {
-  const list = useSelector((store) => store.list.value);
-  const editId = useSelector((store) => store.list.editId);
-  const editValue = useSelector((store) => store.list.editValue);
+export const List = ({ editTask, taskId, title, completed }) => {
+  const dispatch = useDispatch();
+
+  const handleCrossOutTask = (id) => {
+    dispatch(crossOutTask(id));
+  };
+  const handleDeleteTask = (id) => {
+    dispatch(deleteTask(id));
+  };
   return (
-    <Space
-      direction="vertical"
-      size="large"
-      style={{ width: "500px", marginTop: "30px" }}
+    <span
+      style={{
+        backgroundColor: "#e9d1af",
+        borderColor: "#ccb188",
+        width: "100%",
+        height: "40px",
+        borderRadius: "10px",
+        boxSizing: "border-box",
+        padding: "0 15px",
+        fontSize: "18px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        cursor: "pointer",
+        textDecoration: completed ? "line-through" : "none",
+      }}
+      onClick={() => handleCrossOutTask(taskId)}
     >
-      {list.map((item) => (
-        <div key={item.id} id={item.id}>
-          {editId === item.id ? (
-            <Space.Compact size="large" style={{ width: "500px" }}>
-              <Input value={editValue} onChange={handleInputChange} autoFocus />
-              <Button
-                style={{
-                  backgroundColor: "#e9d1af",
-                  borderColor: "#ccb188",
-                  fontSize: "18px",
-                  fontWeight: "500",
-                }}
-                onClick={() => handleUpdateClick(item.id)}
-              >
-                Update
-              </Button>
-            </Space.Compact>
-          ) : (
-            <CrossOutTask
-              taskId={item.id}
-              completed={item.isCompleted}
-              title={item.title}
-            />
-          )}
-        </div>
-      ))}
-    </Space>
+      {title}
+      <Space>
+        <FormOutlined
+          style={{ cursor: "pointer" }}
+          onClick={(event) => {
+            event.stopPropagation();
+            editTask(taskId);
+          }}
+        />
+        <DeleteOutlined
+          style={{ cursor: "pointer" }}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleDeleteTask(taskId);
+          }}
+        />
+      </Space>
+    </span>
   );
 };

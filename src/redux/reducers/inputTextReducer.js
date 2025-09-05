@@ -1,12 +1,12 @@
 const initialValue = {
-  value: "",
+  newTaskText: "",
 };
 const inputTextReducer = (store = initialValue, action) => {
   switch (action.type) {
     case "change":
-      return { ...store, value: action.payload };
+      return { ...store, newTaskText: action.payload };
     case "zero":
-      return { ...store, value: "" };
+      return { ...store, newTaskText: "" };
     default:
       return store;
   }

@@ -2,11 +2,15 @@ import { edit } from "./redux/actions/editIdTaskActions";
 import { useDispatch } from "react-redux";
 import { FormOutlined } from "@ant-design/icons";
 
-export const EditTask = ({ taskId }) => {
-  const dispatch = useDispatch();
-  const editTask = (id) => {
-    dispatch(edit(id));
-  };
+export const EditTask = ({ editTask, taskId }) => {
+  // const editTask = (id) => {
+  //   setEditIdTask(id);
+  //   setEditTaskValue(list[id]);
+  // };
+  // const dispatch = useDispatch();
+  // const editTask = (id) => {
+  //   dispatch(edit(id));
+  //};
 
   return (
     <FormOutlined
@@ -16,5 +20,13 @@ export const EditTask = ({ taskId }) => {
         editTask(taskId);
       }}
     />
+
+    // <FormOutlined
+    //   style={{ cursor: "pointer" }}
+    //   onClick={(event) => {
+    //     event.stopPropagation();
+    //     editTask(taskId);
+    //   }}
+    ///>
   );
 };
