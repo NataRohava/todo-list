@@ -1,16 +1,37 @@
-import { Input, Button, Space } from "antd";
-import { List } from "./List";
+import { Button, Input, Space } from "antd";
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { List } from "./List";
+import { listActions } from "./redux/actions/listActions";
 
-export const EditTaskForm = ({
-  handleInputChange,
-  handleUpdateClick,
-  handleEditKeyDown,
-  editTaskValue,
-  editIdTask,
-  editTask,
-}) => {
+export const EditTaskForm = () => {
+  const [editTaskValue, setEditTaskValue] = useState("");
+  const [editIdTask, setEditIdTask] = useState(null);
+
+  const dispatch = useDispatch();
   const list = useSelector((store) => store.list.tasks);
+  const editTask = (id) => {
+    setEditIdTask(id);
+
+    const taskToEdit = list.find((item) => item.id === id);
+    if (taskToEdit) {
+      setEditTaskValue(taskToEdit.title);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    setEditTaskValue(event.target.value);
+  };
+
+  const handleEditKeyDown = (event, id) => {
+    event.key === "Enter" && handleUpdateClick(id);
+  };
+
+  const handleUpdateClick = (id) => {
+    dispatch(listActions.updateTaskAC(id, editTaskValue));
+    setEditIdTask(null);
+  };
   return (
     <Space
       direction="vertical"

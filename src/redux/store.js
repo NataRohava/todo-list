@@ -1,10 +1,8 @@
-import { legacy_createStore as createStore, combineReducers } from "redux";
 import { composeWithDevTools } from "@redux-devtools/extension";
-import inputTextReducer from "./reducers/inputTextReducer";
+import { combineReducers, legacy_createStore as createStore } from "redux";
 import listReducer from "./reducers/listReducer";
 
 const rootReducer = combineReducers({
-  task: inputTextReducer,
   list: listReducer,
 });
 

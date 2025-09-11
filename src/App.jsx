@@ -1,49 +1,21 @@
-import { Header } from "./Header";
-import { EditTaskForm } from "./EditTaskForm";
 import { Input, Button, Space } from "antd";
-import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import { change } from "./redux/actions/changeActions";
-import { clearInputTask } from "./redux/actions/clearInputTaskActions";
-import { add } from "./redux/actions/addActions";
-import { updateTask } from "./redux/actions/updateTaskActions";
+import { useDispatch } from "react-redux";
+import { EditTaskForm } from "./EditTaskForm";
+import { Header } from "./Header";
+import { listActions } from "./redux/actions/listActions";
 
 import "./App.css";
 
 function App() {
-  const list = useSelector((store) => store.list.tasks);
-  const task = useSelector((store) => store.task.newTaskText);
-
+  const [addTaskValue, setAddTaskValue] = useState("");
   const dispatch = useDispatch();
 
-  const [editIdTask, setEditIdTask] = useState(null);
-  const [editTaskValue, setEditTaskValue] = useState("");
-
   const addTask = () => {
-    if (task.trim()) {
-      dispatch(add(task));
-      dispatch(clearInputTask());
+    if (addTaskValue.trim()) {
+      dispatch(listActions.addTaskAC(addTaskValue));
+      setAddTaskValue("");
     }
-  };
-  const handleChange = (event) => {
-    dispatch(change(event.target.value));
-  };
-  const editTask = (id) => {
-    setEditIdTask(id);
-    const taskToEdit = list.find((item) => item.id === id);
-    if (taskToEdit) {
-      setEditTaskValue(taskToEdit.title);
-    }
-  };
-  const handleInputChange = (event) => {
-    setEditTaskValue(event.target.value);
-  };
-  const handleEditKeyDown = (event, id) => {
-    event.key === "Enter" && handleUpdateClick(id);
-  };
-  const handleUpdateClick = (id) => {
-    dispatch(updateTask(id, editTaskValue));
-    setEditIdTask(null);
   };
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -56,8 +28,8 @@ function App() {
         <Space.Compact size="large" style={{ width: "500px" }}>
           <Input
             placeholder="What is the task today?"
-            value={task}
-            onChange={handleChange}
+            value={addTaskValue}
+            onChange={(event) => setAddTaskValue(event.target.value)}
           />
           <Button
             type="submit"
@@ -73,14 +45,7 @@ function App() {
           </Button>
         </Space.Compact>
       </form>
-      <EditTaskForm
-        handleInputChange={handleInputChange}
-        handleUpdateClick={handleUpdateClick}
-        handleEditKeyDown={handleEditKeyDown}
-        editTaskValue={editTaskValue}
-        editIdTask={editIdTask}
-        editTask={editTask}
-      />
+      <EditTaskForm />
     </Space>
   );
 }
