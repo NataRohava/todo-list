@@ -1,11 +1,10 @@
-import { composeWithDevTools } from "@redux-devtools/extension";
-import { combineReducers, legacy_createStore as createStore } from "redux";
-import listReducer from "./reducers/listReducer";
+import { configureStore } from "@reduxjs/toolkit";
+import listSlice from "./listSlice.js";
 
-const rootReducer = combineReducers({
-  list: listReducer,
+const store = configureStore({
+  reducer: {
+    list: listSlice,
+  },
 });
-
-const store = createStore(rootReducer, composeWithDevTools());
 
 export default store;

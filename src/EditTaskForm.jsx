@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { List } from "./List";
-import { listActions } from "./redux/actions/listActions";
+import { updateTask } from "./redux/listSlice";
 
 export const EditTaskForm = () => {
   const [editTaskValue, setEditTaskValue] = useState("");
@@ -29,7 +29,7 @@ export const EditTaskForm = () => {
   };
 
   const handleUpdateClick = (id) => {
-    dispatch(listActions.updateTaskAC(id, editTaskValue));
+    dispatch(updateTask({ id: id, value: editTaskValue }));
     setEditIdTask(null);
   };
   return (

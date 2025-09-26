@@ -3,23 +3,23 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { EditTaskForm } from "./EditTaskForm";
 import { Header } from "./Header";
-import { listActions } from "./redux/actions/listActions";
-
+import { addTask } from "./redux/listSlice";
 import "./App.css";
 
 function App() {
   const [addTaskValue, setAddTaskValue] = useState("");
   const dispatch = useDispatch();
 
-  const addTask = () => {
+  const handleAddTask = () => {
     if (addTaskValue.trim()) {
-      dispatch(listActions.addTaskAC(addTaskValue));
+      dispatch(addTask(addTaskValue));
       setAddTaskValue("");
     }
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    addTask();
+
+    handleAddTask();
   };
   return (
     <Space direction="vertical" size="middle">
@@ -39,7 +39,7 @@ function App() {
               fontSize: "18px",
               fontWeight: "500",
             }}
-            onClick={addTask}
+            onClick={handleAddTask}
           >
             Add task
           </Button>

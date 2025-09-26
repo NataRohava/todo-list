@@ -1,16 +1,18 @@
 import { Space } from "antd";
 import { useDispatch } from "react-redux";
-import { listActions } from "./redux/actions/listActions";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
+import { deleteTask } from "./redux/listSlice";
+import { crossOut } from "./redux/listSlice";
 
 export const List = ({ editTask, taskId, title, completed }) => {
   const dispatch = useDispatch();
 
   const handleCrossOutTask = (id) => {
-    dispatch(listActions.crossOutTaskAC(id));
+    dispatch(crossOut(id));
   };
+
   const handleDeleteTask = (id) => {
-    dispatch(listActions.deleteTaskAC(id));
+    dispatch(deleteTask(id));
   };
   return (
     <span
