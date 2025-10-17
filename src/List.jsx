@@ -2,11 +2,9 @@ import { Space } from "antd";
 import { useDispatch } from "react-redux";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
 import { fetchCrossOutTask, fetchDeleteTask } from "./redux/listSlice";
-//import { deleteTask } from "./redux/listSlice";
 import { crossOut } from "./redux/listSlice";
 
 export const List = ({ editTask, taskId, title, completed }) => {
-  //console.log("List рендерится", { taskId, title, completed });
   const dispatch = useDispatch();
 
   const handleCrossOutTask = (id, isCompleted) => {
