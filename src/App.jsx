@@ -1,18 +1,25 @@
 import { Input, Button, Space } from "antd";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { EditTaskForm } from "./EditTaskForm";
 import { Header } from "./Header";
-import { addTask } from "./redux/listSlice";
+import { fetchGetTodos, fetchAddTask } from "./redux/listSlice";
+import { listSelectors } from "./redux/listSelectors";
 import "./App.css";
 
 function App() {
+  const loading = useSelector(listSelectors.selectLoading);
+  const error = useSelector(listSelectors.selectError);
   const [addTaskValue, setAddTaskValue] = useState("");
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(fetchGetTodos());
+  }, []);
+
   const handleAddTask = () => {
     if (addTaskValue.trim()) {
-      dispatch(addTask(addTaskValue));
+      dispatch(fetchAddTask(addTaskValue));
       setAddTaskValue("");
     }
   };
@@ -46,6 +53,8 @@ function App() {
         </Space.Compact>
       </form>
       <EditTaskForm />
+      {loading ? <h1>⏳ Loading ...</h1> : null}
+      {error ? <div>Error: {error}</div> : null}
     </Space>
   );
 }

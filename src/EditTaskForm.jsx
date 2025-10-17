@@ -1,16 +1,16 @@
 import { Button, Input, Space } from "antd";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { List } from "./List";
-import { updateTask } from "./redux/listSlice";
+import { fetchUpdateTask } from "./redux/listSlice";
+import { listSelectors } from "./redux/listSelectors";
 
 export const EditTaskForm = () => {
   const [editTaskValue, setEditTaskValue] = useState("");
   const [editIdTask, setEditIdTask] = useState(null);
 
   const dispatch = useDispatch();
-  const list = useSelector((store) => store.list.tasks);
+  const list = useSelector(listSelectors.selectTasks);
   const editTask = (id) => {
     setEditIdTask(id);
 
@@ -29,7 +29,7 @@ export const EditTaskForm = () => {
   };
 
   const handleUpdateClick = (id) => {
-    dispatch(updateTask({ id: id, value: editTaskValue }));
+    dispatch(fetchUpdateTask({ id: id, title: editTaskValue }));
     setEditIdTask(null);
   };
   return (

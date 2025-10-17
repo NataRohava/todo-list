@@ -1,18 +1,21 @@
 import { Space } from "antd";
 import { useDispatch } from "react-redux";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
-import { deleteTask } from "./redux/listSlice";
+import { fetchCrossOutTask, fetchDeleteTask } from "./redux/listSlice";
+//import { deleteTask } from "./redux/listSlice";
 import { crossOut } from "./redux/listSlice";
 
 export const List = ({ editTask, taskId, title, completed }) => {
+  //console.log("List рендерится", { taskId, title, completed });
   const dispatch = useDispatch();
 
-  const handleCrossOutTask = (id) => {
+  const handleCrossOutTask = (id, isCompleted) => {
     dispatch(crossOut(id));
+    dispatch(fetchCrossOutTask({ id, isCompleted }));
   };
 
   const handleDeleteTask = (id) => {
-    dispatch(deleteTask(id));
+    dispatch(fetchDeleteTask(id));
   };
   return (
     <span
@@ -31,7 +34,7 @@ export const List = ({ editTask, taskId, title, completed }) => {
         cursor: "pointer",
         textDecoration: completed ? "line-through" : "none",
       }}
-      onClick={() => handleCrossOutTask(taskId)}
+      onClick={() => handleCrossOutTask(taskId, completed)}
     >
       {title}
       <Space>
