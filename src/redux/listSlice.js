@@ -39,7 +39,7 @@ const fetchDeleteTask = createAsyncThunk(
 );
 const fetchCrossOutTask = createAsyncThunk(
   "list/fetchCrossOutTask",
-  async ({ id, isCompleted }) => {
+  async ({ id, isCompleted }, thunkAPI) => {
     try {
       const response = await config.patch(`/todos/${id}/isCompleted`, {
         isCompleted: !isCompleted,
@@ -72,11 +72,10 @@ const listSlice = createSlice({
   initialState,
   reducers: {
     crossOut: (state, action) => {
-      state.tasks = state.tasks.map((task) =>
-        task.id === action.payload
-          ? { ...task, isCompleted: !task.isCompleted }
-          : task,
-      );
+      const task = state.tasks.find((item) => item.id === action.payload);
+      if (task) {
+        task.isCompleted = !task.isCompleted;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -91,38 +90,53 @@ const listSlice = createSlice({
       })
       .addCase(fetchDeleteTask.fulfilled, (state, action) => {
         state.loading = false;
-        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+
+        const index = state.tasks.findIndex(
+          (task) => task.id === action.payload,
+        );
+        if (index !== -1) {
+          state.tasks.splice(index, 1);
+        }
       })
       .addCase(fetchCrossOutTask.fulfilled, (state, action) => {
         state.loading = false;
-        state.tasks = state.tasks.map((task) =>
-          task.id === action.payload.id
-            ? { ...task, isCompleted: !task.isCompleted }
-            : task,
-        );
+
+        const task = state.tasks.find((item) => item.id === action.payload.id);
+        if (task) {
+          task.isCompleted = !task.isCompleted;
+        }
       })
       .addCase(fetchUpdateTask.fulfilled, (state, action) => {
         state.loading = false;
-        state.tasks = state.tasks.map((item) =>
-          item.id === action.payload.id ? action.payload : item,
-        );
+
+        const task = state.tasks.find((item) => item.id === action.payload.id);
+        if (task) {
+          task.title = action.payload.title;
+        }
       })
       .addMatcher(
         (action) => action.type.endsWith("/pending"),
         (state) => {
           state.loading = true;
+          state.error = null;
         },
       )
       .addMatcher(
         (action) => action.type.endsWith("/rejected"),
         (state, action) => {
           state.loading = false;
-          state.error = action.error.message;
+          state.error = action.payload;
         },
       );
   },
+  selectors: {
+    selectTasks: (state) => state.tasks,
+    selectLoading: (state) => state.loading,
+    selectError: (state) => state.error,
+  },
 });
 export const { crossOut } = listSlice.actions;
+export const { selectTasks, selectLoading, selectError } = listSlice.selectors;
 export {
   fetchGetTodos,
   fetchAddTask,

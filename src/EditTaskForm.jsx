@@ -3,14 +3,14 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { List } from "./List";
 import { fetchUpdateTask } from "./redux/listSlice";
-import { listSelectors } from "./redux/listSelectors";
+import { selectTasks } from "./redux/listSlice";
 
 export const EditTaskForm = () => {
   const [editTaskValue, setEditTaskValue] = useState("");
   const [editIdTask, setEditIdTask] = useState(null);
 
   const dispatch = useDispatch();
-  const list = useSelector(listSelectors.selectTasks);
+  const list = useSelector(selectTasks);
   const editTask = (id) => {
     setEditIdTask(id);
 

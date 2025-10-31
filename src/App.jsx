@@ -3,13 +3,18 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EditTaskForm } from "./EditTaskForm";
 import { Header } from "./Header";
-import { fetchGetTodos, fetchAddTask } from "./redux/listSlice";
-import { listSelectors } from "./redux/listSelectors";
+import {
+  fetchGetTodos,
+  fetchAddTask,
+  selectLoading,
+  selectError,
+} from "./redux/listSlice";
+
 import "./App.css";
 
 function App() {
-  const loading = useSelector(listSelectors.selectLoading);
-  const error = useSelector(listSelectors.selectError);
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
   const [addTaskValue, setAddTaskValue] = useState("");
   const dispatch = useDispatch();
 
