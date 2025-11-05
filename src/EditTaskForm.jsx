@@ -29,6 +29,10 @@ export const EditTaskForm = () => {
   };
 
   const handleUpdateClick = (id) => {
+    if (editTaskValue.trim() === "") {
+      alert("Задача не может быть пустой!");
+      return;
+    }
     dispatch(fetchUpdateTask({ id: id, title: editTaskValue }));
     setEditIdTask(null);
   };
